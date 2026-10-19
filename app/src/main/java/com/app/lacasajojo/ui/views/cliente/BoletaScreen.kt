@@ -21,13 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import cl.dsy1105.lacasajojo.repository.AppRepository
-import cl.dsy1105.lacasajojo.model.Pedido
-import cl.dsy1105.lacasajojo.model.Rol
-import cl.dsy1105.lacasajojo.ui.components.BarraSuperior
-import cl.dsy1105.lacasajojo.ui.components.TarjetaJoJo
-import cl.dsy1105.lacasajojo.utils.clp
-import cl.dsy1105.lacasajojo.utils.formatoBoleta
+import com.app.lacasajojo.repository.AppRepository
+import com.app.lacasajojo.model.Pedido
+import com.app.lacasajojo.model.Rol
+import com.app.lacasajojo.ui.components.BarraSuperior
+import com.app.lacasajojo.ui.components.TarjetaJoJo
+import com.app.lacasajojo.utils.clp
+import com.app.lacasajojo.utils.formatoBoleta
 
 // Boleta del pedido: detalle, neto, IVA y total (comprobante interno, no tributario)
 @Composable

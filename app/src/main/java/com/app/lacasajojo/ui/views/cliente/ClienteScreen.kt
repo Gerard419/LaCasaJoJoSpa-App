@@ -32,20 +32,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import cl.dsy1105.lacasajojo.navigation.Rutas
-import cl.dsy1105.lacasajojo.ui.components.BarraSuperior
-import cl.dsy1105.lacasajojo.ui.components.BotonJoJo
-import cl.dsy1105.lacasajojo.ui.components.BotonTexto
-import cl.dsy1105.lacasajojo.ui.components.CampoTexto
-import cl.dsy1105.lacasajojo.ui.components.FotoPlato
-import cl.dsy1105.lacasajojo.ui.components.Pestanas
-import cl.dsy1105.lacasajojo.ui.components.TarjetaJoJo
-import cl.dsy1105.lacasajojo.utils.MAX_OBSERVACIONES
-import cl.dsy1105.lacasajojo.utils.clp
-import cl.dsy1105.lacasajojo.utils.formatoBoleta
-import cl.dsy1105.lacasajojo.utils.vibrar
-import cl.dsy1105.lacasajojo.viewmodel.AppViewModelProvider
-import cl.dsy1105.lacasajojo.viewmodel.ClienteViewModel
+import com.app.lacasajojo.navigation.Rutas
+import com.app.lacasajojo.ui.components.BarraSuperior
+import com.app.lacasajojo.ui.components.BotonJoJo
+import com.app.lacasajojo.ui.components.BotonTexto
+import com.app.lacasajojo.ui.components.CampoTexto
+import com.app.lacasajojo.ui.components.FotoPlato
+import com.app.lacasajojo.ui.components.Pestanas
+import com.app.lacasajojo.ui.components.TarjetaJoJo
+import com.app.lacasajojo.utils.MAX_OBSERVACIONES
+import com.app.lacasajojo.utils.clp
+import com.app.lacasajojo.utils.formatoBoleta
+import com.app.lacasajojo.utils.vibrar
+import com.app.lacasajojo.viewmodel.AppViewModelProvider
+import com.app.lacasajojo.viewmodel.ClienteViewModel
 
 // Cliente: ve el menú del día, arma su pedido y consulta sus boletas
 @Composable
