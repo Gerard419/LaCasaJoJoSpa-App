@@ -1,4 +1,4 @@
-package cl.dsy1105.lacasajojo
+package com.app.lacasajojo
 
 import cl.dsy1105.lacasajojo.model.EstadoPedido
 import cl.dsy1105.lacasajojo.model.ItemPedido
