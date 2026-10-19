@@ -27,15 +27,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cl.dsy1105.lacasajojo.ui.components.BarraSuperior
-import cl.dsy1105.lacasajojo.ui.components.BotonJoJo
-import cl.dsy1105.lacasajojo.ui.components.CampoTexto
-import cl.dsy1105.lacasajojo.ui.components.TarjetaJoJo
-import cl.dsy1105.lacasajojo.utils.MAX_EMAIL
-import cl.dsy1105.lacasajojo.utils.MAX_NOMBRE
-import cl.dsy1105.lacasajojo.utils.MAX_PASSWORD
+import com.app.lacasajojo.ui.components.BarraSuperior
+import com.app.lacasajojo.ui.components.BotonJoJo
+import com.app.lacasajojo.ui.components.CampoTexto
+import com.app.lacasajojo.ui.components.TarjetaJoJo
+import com.app.lacasajojo.utils.MAX_EMAIL
+import com.app.lacasajojo.utils.MAX_NOMBRE
+import com.app.lacasajojo.utils.MAX_PASSWORD
 import com.app.lacasajojo.viewmodel.AdminViewModel
-import cl.dsy1105.lacasajojo.viewmodel.AppViewModelProvider
+import com.app.lacasajojo.viewmodel.AppViewModelProvider
 
 // Administrador: mantiene la app (crea cuentas de dueño y bloquea o activa usuarios)
 @Composable
