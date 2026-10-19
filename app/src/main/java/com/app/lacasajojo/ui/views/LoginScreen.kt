@@ -22,17 +22,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import cl.dsy1105.lacasajojo.navigation.Rutas
-import cl.dsy1105.lacasajojo.ui.components.BarraSuperior
-import cl.dsy1105.lacasajojo.ui.components.BotonJoJo
-import cl.dsy1105.lacasajojo.ui.components.BotonTexto
-import cl.dsy1105.lacasajojo.ui.components.CampoTexto
-import cl.dsy1105.lacasajojo.ui.components.ColumnaFormulario
-import cl.dsy1105.lacasajojo.ui.components.MensajeError
-import cl.dsy1105.lacasajojo.utils.MAX_EMAIL
-import cl.dsy1105.lacasajojo.utils.MAX_PASSWORD
-import cl.dsy1105.lacasajojo.utils.vibrar
-import cl.dsy1105.lacasajojo.viewmodel.AppViewModelProvider
+import com.app.lacasajojo.navigation.Rutas
+import com.app.lacasajojo.ui.components.BarraSuperior
+import com.app.lacasajojo.ui.components.BotonJoJo
+import com.app.lacasajojo.ui.components.BotonTexto
+import com.app.lacasajojo.ui.components.CampoTexto
+import com.app.lacasajojo.ui.components.ColumnaFormulario
+import com.app.lacasajojo.ui.components.MensajeError
+import com.app.lacasajojo.utils.MAX_EMAIL
+import com.app.lacasajojo.utils.MAX_PASSWORD
+import com.app.lacasajojo.utils.vibrar
+import com.app.lacasajojo.viewmodel.AppViewModelProvider
 import com.app.lacasajojo.viewmodel.LoginViewModel
 
 // Pantalla de ingreso: la usan los 3 tipos de usuario

@@ -27,12 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.app.lacasajojo.ui.views.components.BarraSuperior
-import com.app.lacasajojo.ui.views.components.BotonJoJo
-import com.app.lacasajojo.ui.views.components.FotoPlato
-import com.app.lacasajojo.ui.views.components.MensajeError
+import com.app.lacasajojo.ui.components.BarraSuperior
+import com.app.lacasajojo.ui.components.BotonJoJo
+import com.app.lacasajojo.ui.components.FotoPlato
+import com.app.lacasajojo.ui.components.MensajeError
 import com.app.lacasajojo.utils.clp
-import cl.dsy1105.lacasajojo.viewmodel.AppViewModelProvider
+import com.app.lacasajojo.viewmodel.AppViewModelProvider
 import com.app.lacasajojo.viewmodel.ArmarPlatoViewModel
 
 // Armar el plato: 1 o 2 agregados + 1 ensalada (reglas RN-01 y RF del ERS)

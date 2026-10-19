@@ -3,10 +3,10 @@ package com.app.lacasajojo.viewmodel
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cl.dsy1105.lacasajojo.model.Rol
+import com.app.lacasajojo.model.Rol
 import com.app.lacasajojo.repository.AppRepository
-import cl.dsy1105.lacasajojo.utils.validarEmail
-import cl.dsy1105.lacasajojo.utils.validarPasswordLogin
+import com.app.lacasajojo.utils.validarEmail
+import com.app.lacasajojo.utils.validarPasswordLogin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

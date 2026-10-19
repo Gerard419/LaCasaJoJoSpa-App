@@ -2,11 +2,11 @@ package com.app.lacasajojo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.app.lacasajojo.repository.AppRepository
-import cl.dsy1105.lacasajojo.utils.validarConfirmacion
-import cl.dsy1105.lacasajojo.utils.validarEmail
-import cl.dsy1105.lacasajojo.utils.validarNombre
-import cl.dsy1105.lacasajojo.utils.validarPassword
-import cl.dsy1105.lacasajojo.utils.validarTelefono
+import com.app.lacasajojo.utils.validarConfirmacion
+import com.app.lacasajojo.utils.validarEmail
+import com.app.lacasajojo.utils.validarNombre
+import com.app.lacasajojo.utils.validarPassword
+import com.app.lacasajojo.utils.validarTelefono
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

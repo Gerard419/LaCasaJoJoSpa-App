@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import cl.dsy1105.lacasajojo.navigation.AppNavigation
+import com.app.lacasajojo.navigation.AppNavigation
 import com.app.lacasajojo.repository.AppRepository
 import com.app.lacasajojo.ui.theme.LaCasaJoJoTheme
 

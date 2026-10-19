@@ -18,15 +18,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import cl.dsy1105.lacasajojo.ui.components.BarraSuperior
-import cl.dsy1105.lacasajojo.ui.components.BotonJoJo
-import cl.dsy1105.lacasajojo.ui.components.CampoTexto
-import cl.dsy1105.lacasajojo.ui.components.ColumnaFormulario
-import cl.dsy1105.lacasajojo.utils.LARGO_TELEFONO
-import cl.dsy1105.lacasajojo.utils.MAX_EMAIL
-import cl.dsy1105.lacasajojo.utils.MAX_NOMBRE
-import cl.dsy1105.lacasajojo.utils.MAX_PASSWORD
-import cl.dsy1105.lacasajojo.viewmodel.AppViewModelProvider
+import com.app.lacasajojo.ui.components.BarraSuperior
+import com.app.lacasajojo.ui.components.BotonJoJo
+import com.app.lacasajojo.ui.components.CampoTexto
+import com.app.lacasajojo.ui.components.ColumnaFormulario
+import com.app.lacasajojo.utils.LARGO_TELEFONO
+import com.app.lacasajojo.utils.MAX_EMAIL
+import com.app.lacasajojo.utils.MAX_NOMBRE
+import com.app.lacasajojo.utils.MAX_PASSWORD
+import com.app.lacasajojo.viewmodel.AppViewModelProvider
 import com.app.lacasajojo.viewmodel.RegistroViewModel
 
 // RF-01: registro público, solo para clientes
