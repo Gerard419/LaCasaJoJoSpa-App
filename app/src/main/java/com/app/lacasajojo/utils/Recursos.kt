@@ -12,6 +12,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withContext
+import com.app.lacasajojo.remote.ApiConfig
 
 // ----------------------------------------------------------------------
 // Recurso nativo 1: cámara (guardar la foto en el almacenamiento interno de la app)
@@ -29,9 +35,33 @@ fun guardarFoto(context: Context, bitmap: Bitmap): String? {
     }
 }
 
-fun cargarFoto(ruta: String?): ImageBitmap? {
-    if (ruta.isNullOrBlank() || !File(ruta).exists()) return null
-    return BitmapFactory.decodeFile(ruta)?.asImageBitmap()
+// Las fotos ya publicadas usan una ruta relativa del backend; las no publicadas usan archivo local.
+// Se ejecuta fuera del hilo principal para no bloquear Compose durante la descarga.
+suspend fun cargarFoto(ruta: String?): ImageBitmap? = withContext(Dispatchers.IO) {
+    if (ruta.isNullOrBlank()) return@withContext null
+    try {
+        val bitmap = if (ruta.startsWith("/api/fotos/")) {
+            // Nunca aceptar URLs arbitrarias del backend: solo la ruta de fotografías propia.
+            if (!Regex("^/api/fotos/[0-9a-fA-F-]{36}\\.jpg$").matches(ruta)) return@withContext null
+            val conexion = (URL("http://${ApiConfig.HOST}:${ApiConfig.PUERTO_MENU}$ruta")
+                .openConnection() as HttpURLConnection)
+            try {
+                conexion.connectTimeout = 4000
+                conexion.readTimeout = 8000
+                if (conexion.responseCode != 200) return@withContext null
+                conexion.inputStream.use { BitmapFactory.decodeStream(it) }
+            } finally {
+                conexion.disconnect()
+            }
+        } else {
+            BitmapFactory.decodeFile(ruta)
+        }
+        bitmap?.asImageBitmap()
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        null
+    }
 }
 
 // ----------------------------------------------------------------------

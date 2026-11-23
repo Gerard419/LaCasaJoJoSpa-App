@@ -38,7 +38,7 @@ data class Plato(
     val nombre: String,
     val precio: Int,
     val disponible: Boolean = true, // "disponible hoy" = está en el menú del día
-    val foto: String? = null // ruta de la foto tomada con la cámara (recurso nativo)
+    val foto: String? = null // ruta /api/fotos/... en el servidor (o archivo local antes de subir)
 )
 
 // Agregado (puré, arroz...) o ensalada

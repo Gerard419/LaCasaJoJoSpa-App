@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Restaurant
@@ -19,6 +21,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +44,7 @@ import com.app.lacasajojo.ui.components.BarraSuperior
 import com.app.lacasajojo.ui.components.BotonJoJo
 import com.app.lacasajojo.ui.components.BotonTexto
 import com.app.lacasajojo.ui.components.CampoTexto
-import com.app.lacasajojo.ui.components.FotoPlato
+import com.app.lacasajojo.ui.components.TarjetaCatalogo
 import com.app.lacasajojo.ui.components.Pestanas
 import com.app.lacasajojo.ui.components.TarjetaJoJo
 import com.app.lacasajojo.utils.MAX_PLATO
@@ -59,109 +62,116 @@ fun DuenoScreen(
     var pestana by rememberSaveable { mutableStateOf(0) }
 
     Scaffold(
-        topBar = { BarraSuperior("Panel del dueño", "Salir") { viewModel.onSalir() } }
+        topBar = { BarraSuperior("La casa JoJo · Dueño", "Salir") { viewModel.onSalir() } }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            Pestanas(listOf("Platos", "Extras", "Pedidos"), pestana) { pestana = it }
+            Pestanas(listOf("Menú", "Pedidos"), pestana) { pestana = it }
             when (pestana) {
-                0 -> PlatosTab(navController, viewModel)
-                1 -> ExtrasTab(viewModel)
+                0 -> MenuVisualTab(navController, viewModel)
                 else -> PedidosTab(navController, viewModel)
             }
         }
     }
 }
 
-// ---------------------------------------------------------------------
-// Pestaña Platos
-// ---------------------------------------------------------------------
+// Menú visual del video de entrega anterior: platos, agregados y ensaladas en carruseles.
+// Las acciones usan el mismo ViewModel y los mismos microservicios que la versión EP4.
 @Composable
-private fun PlatosTab(navController: NavHostController, viewModel: DuenoViewModel) {
+private fun MenuVisualTab(navController: NavHostController, viewModel: DuenoViewModel) {
     val platos by viewModel.platos.collectAsState()
-    var porEliminar by remember { mutableStateOf<Plato?>(null) }
+    val extras by viewModel.extras.collectAsState()
+    val form by viewModel.formExtra.collectAsState()
+    var platoPorEliminar by remember { mutableStateOf<Plato?>(null) }
+    var extraPorEliminar by remember { mutableStateOf<Extra?>(null) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(14.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            BotonJoJo("Agregar plato", { navController.navigate(Rutas.platoForm(0)) }, Modifier.fillMaxWidth())
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("Plato de fondo", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text("Toca Editar para cambiar nombre, precio o imagen", style = MaterialTheme.typography.bodySmall)
+                Spacer(Modifier.height(6.dp))
+                BotonJoJo("Agregar plato", { navController.navigate(Rutas.platoForm(0)) }, Modifier.fillMaxWidth())
+            }
         }
-        items(platos, key = { it.id }) { plato ->
-            TarjetaJoJo(modifier = Modifier.animateItem()) {
-                FotoPlato(
-                    ruta = plato.foto,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp)
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(plato.nombre, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                    Text(plato.precio.clp(), fontWeight = FontWeight.Bold)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Switch(
-                        checked = plato.disponible,
-                        onCheckedChange = { viewModel.onCambiarDisponiblePlato(plato.id) }
-                    )
-                    Text("  Disponible hoy")
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = { navController.navigate(Rutas.platoForm(plato.id)) }) {
-                        Text("Editar", color = MaterialTheme.colorScheme.onBackground)
+        item {
+            if (platos.isEmpty()) Text("Todavía no hay platos registrados.")
+            else LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(platos, key = { it.id }) { plato ->
+                    TarjetaCatalogo(nombre = plato.nombre, foto = plato.foto, precio = plato.precio.clp()) {
+                        Switch(
+                            checked = plato.disponible,
+                            onCheckedChange = { viewModel.onCambiarDisponiblePlato(plato.id) },
+                            modifier = Modifier.height(34.dp)
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                            OutlinedButton(
+                                onClick = { navController.navigate(Rutas.platoForm(plato.id)) },
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                                modifier = Modifier.height(34.dp)
+                            ) { Text("Editar", style = MaterialTheme.typography.labelSmall) }
+                            TextButton(
+                                onClick = { platoPorEliminar = plato },
+                                contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp),
+                                modifier = Modifier.height(34.dp)
+                            ) { Text("Eliminar", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error) }
+                        }
                     }
-                    BotonTexto("Eliminar", peligro = true) { porEliminar = plato }
                 }
             }
         }
-    }
-
-    porEliminar?.let { plato ->
-        AlertDialog(
-            onDismissRequest = { porEliminar = null },
-            title = { Text("Eliminar plato") },
-            text = { Text("¿Seguro que quieres eliminar \"${plato.nombre}\"?") },
-            confirmButton = {
-                BotonTexto("Eliminar", peligro = true) {
-                    viewModel.onEliminarPlato(plato.id)
-                    porEliminar = null
-                }
-            },
-            dismissButton = { BotonTexto("Cancelar") { porEliminar = null } }
-        )
-    }
-}
-
-// ---------------------------------------------------------------------
-// Pestaña Extras (agregados y ensaladas)
-// ---------------------------------------------------------------------
-@Composable
-private fun ExtrasTab(viewModel: DuenoViewModel) {
-    val extras by viewModel.extras.collectAsState()
-    val form by viewModel.formExtra.collectAsState()
-    var porEliminar by remember { mutableStateOf<Extra?>(null) }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+        item { Text("Agregados", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
         item {
-            Column {
-                Text(
-                    "Agregar agregado o ensalada",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(8.dp))
+            val agregados = extras.filter { it.tipo == TipoExtra.AGREGADO }
+            if (agregados.isEmpty()) Text("No hay agregados.")
+            else LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(agregados, key = { it.id }) { extra ->
+                    TarjetaCatalogo(nombre = extra.nombre, foto = null) {
+                        Switch(
+                            checked = extra.disponible,
+                            onCheckedChange = { viewModel.onCambiarDisponibleExtra(extra.id) },
+                            modifier = Modifier.height(34.dp)
+                        )
+                        TextButton(
+                            onClick = { extraPorEliminar = extra },
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier.height(30.dp)
+                        ) { Text("Eliminar", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error) }
+                    }
+                }
+            }
+        }
+        item { Text("Ensaladas", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        item {
+            val ensaladas = extras.filter { it.tipo == TipoExtra.ENSALADA }
+            if (ensaladas.isEmpty()) Text("No hay ensaladas.")
+            else LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(ensaladas, key = { it.id }) { extra ->
+                    TarjetaCatalogo(nombre = extra.nombre, foto = null) {
+                        Switch(
+                            checked = extra.disponible,
+                            onCheckedChange = { viewModel.onCambiarDisponibleExtra(extra.id) },
+                            modifier = Modifier.height(34.dp)
+                        )
+                        TextButton(
+                            onClick = { extraPorEliminar = extra },
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier.height(30.dp)
+                        ) { Text("Eliminar", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error) }
+                    }
+                }
+            }
+        }
+        item {
+            TarjetaJoJo {
+                Text("Añadir agregado o ensalada", fontWeight = FontWeight.Bold)
                 CampoTexto(
                     valor = form.nombre,
                     onCambio = viewModel::onNombreExtraChange,
@@ -171,44 +181,33 @@ private fun ExtrasTab(viewModel: DuenoViewModel) {
                     maxLength = MAX_PLATO
                 )
                 Pestanas(listOf("Agregado", "Ensalada"), form.tipo) { viewModel.onTipoExtraChange(it) }
-                Spacer(Modifier.height(8.dp))
                 BotonJoJo("Agregar", viewModel::onAgregarExtra, Modifier.fillMaxWidth())
-            }
-        }
-        items(extras, key = { it.id }) { extra ->
-            TarjetaJoJo(modifier = Modifier.animateItem()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(extra.nombre, fontWeight = FontWeight.Bold)
-                        Text(if (extra.tipo == TipoExtra.AGREGADO) "Agregado" else "Ensalada")
-                    }
-                    Switch(
-                        checked = extra.disponible,
-                        onCheckedChange = { viewModel.onCambiarDisponibleExtra(extra.id) }
-                    )
-                }
-                Text(if (extra.disponible) "Disponible hoy" else "No disponible")
-                BotonTexto("Eliminar", peligro = true) { porEliminar = extra }
             }
         }
     }
 
-    porEliminar?.let { extra ->
+    platoPorEliminar?.let { plato ->
         AlertDialog(
-            onDismissRequest = { porEliminar = null },
-            title = { Text("Eliminar") },
-            text = { Text("¿Seguro que quieres eliminar \"${extra.nombre}\"?") },
-            confirmButton = {
-                BotonTexto("Eliminar", peligro = true) {
-                    viewModel.onEliminarExtra(extra.id)
-                    porEliminar = null
-                }
-            },
-            dismissButton = { BotonTexto("Cancelar") { porEliminar = null } }
+            onDismissRequest = { platoPorEliminar = null },
+            title = { Text("Eliminar plato") },
+            text = { Text("¿Seguro que quieres eliminar \"${plato.nombre}\"?") },
+            confirmButton = { BotonTexto("Eliminar", peligro = true) {
+                viewModel.onEliminarPlato(plato.id)
+                platoPorEliminar = null
+            } },
+            dismissButton = { BotonTexto("Cancelar") { platoPorEliminar = null } }
+        )
+    }
+    extraPorEliminar?.let { extra ->
+        AlertDialog(
+            onDismissRequest = { extraPorEliminar = null },
+            title = { Text("Eliminar agregado o ensalada") },
+            text = { Text("¿Eliminar \"${extra.nombre}\"?") },
+            confirmButton = { BotonTexto("Eliminar", peligro = true) {
+                viewModel.onEliminarExtra(extra.id)
+                extraPorEliminar = null
+            } },
+            dismissButton = { BotonTexto("Cancelar") { extraPorEliminar = null } }
         )
     }
 }

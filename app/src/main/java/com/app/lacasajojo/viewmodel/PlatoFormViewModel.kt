@@ -1,6 +1,7 @@
 package com.app.lacasajojo.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.app.lacasajojo.model.Plato
 import com.app.lacasajojo.repository.AppRepository
 import com.app.lacasajojo.utils.validarMonto
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class PlatoFormUiState(
     val esNuevo: Boolean = true,
@@ -80,15 +82,18 @@ class PlatoFormViewModel(
             _estado.update { it.copy(errorNombre = errorNombre, errorPrecio = errorPrecio) }
             return
         }
-        repository.guardarPlato(
-            Plato(
-                id = existente?.id ?: 0,
-                nombre = e.nombre.trim(),
-                precio = e.precio.trim().toInt(),
-                disponible = existente?.disponible ?: true,
-                foto = e.foto
+        viewModelScope.launch {
+            val guardado = repository.guardarPlato(
+                Plato(
+                    id = existente?.id ?: 0,
+                    nombre = e.nombre.trim(),
+                    precio = e.precio.trim().toInt(),
+                    disponible = existente?.disponible ?: true,
+                    foto = e.foto
+                )
             )
-        )
-        _estado.update { it.copy(guardado = true) }
+            // Si el servidor no respondió, el formulario queda abierto (el aviso sale como Toast)
+            if (guardado) _estado.update { it.copy(guardado = true) }
+        }
     }
 }

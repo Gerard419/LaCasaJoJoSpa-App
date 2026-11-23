@@ -13,3 +13,15 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Configuración local de Android Studio
+.idea/
+
+# Archivos compilados de Maven
+**/target/
+
+# Bases de datos locales H2
+**/*.mv.db
+**/*.trace.db
+
+# Propiedades privadas de firma
+keystore.properties

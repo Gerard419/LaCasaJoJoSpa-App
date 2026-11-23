@@ -18,7 +18,7 @@ object AppViewModelProvider {
         initializer { RegistroViewModel(app().repository) }
         initializer { AdminViewModel(app().repository) }
         initializer { DuenoViewModel(app().repository) }
-        initializer { ClienteViewModel(app().repository) }
+        initializer { ClienteViewModel(app().repository, app().climaRepository) }
     }
 
     // Estos dos reciben un parámetro de la ruta (id del plato)
