@@ -1,6 +1,7 @@
 package com.app.lacasajojo.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.app.lacasajojo.repository.AppRepository
 import com.app.lacasajojo.utils.validarConfirmacion
 import com.app.lacasajojo.utils.validarEmail
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class RegistroUiState(
     val nombre: String = "",
@@ -79,10 +81,13 @@ class RegistroViewModel(private val repository: AppRepository) : ViewModel() {
             }
             return
         }
-        if (!repository.registrarCliente(e.nombre, e.email, e.telefono, e.password)) {
-            _estado.update { it.copy(errorEmail = "Ya existe una cuenta con ese correo") }
-        } else {
-            _estado.update { it.copy(registrado = true) }
+        viewModelScope.launch {
+            val error = repository.registrarCliente(e.nombre, e.email, e.telefono, e.password)
+            if (error != null) {
+                _estado.update { it.copy(errorEmail = error) }
+            } else {
+                _estado.update { it.copy(registrado = true) }
+            }
         }
     }
 }
