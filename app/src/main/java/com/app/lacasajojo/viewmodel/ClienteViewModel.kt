@@ -7,6 +7,8 @@ import com.app.lacasajojo.model.ItemPedido
 import com.app.lacasajojo.model.Pedido
 import com.app.lacasajojo.model.Plato
 import com.app.lacasajojo.repository.AppRepository
+import com.app.lacasajojo.repository.Clima
+import com.app.lacasajojo.repository.ClimaRepository
 import com.app.lacasajojo.utils.MAX_OBSERVACIONES
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class CarritoUiState(
     val observaciones: String = "",
@@ -21,7 +24,23 @@ data class CarritoUiState(
 )
 
 // Cliente: menú del día, carrito y sus pedidos
-class ClienteViewModel(private val repository: AppRepository) : ViewModel() {
+class ClienteViewModel(
+    private val repository: AppRepository,
+    private val climaRepository: ClimaRepository? = null
+) : ViewModel() {
+
+    // API externa (Open-Meteo): clima del día; null mientras carga o si no hay conexión
+    private val _clima = MutableStateFlow<Clima?>(null)
+    val clima: StateFlow<Clima?> = _clima.asStateFlow()
+
+    init {
+        cargarClima()
+    }
+
+    fun cargarClima() {
+        val api = climaRepository ?: return
+        viewModelScope.launch { _clima.value = api.obtenerClima() }
+    }
 
     // Menú del día agrupado por precio: lista de (precio, platos)
     val menu: StateFlow<List<Pair<Int, List<Plato>>>> = snapshotFlow {
@@ -46,9 +65,11 @@ class ClienteViewModel(private val repository: AppRepository) : ViewModel() {
     fun onQuitar(index: Int) = repository.quitarDelCarrito(index)
 
     fun onConfirmar() {
-        val pedido = repository.confirmarPedido(_estado.value.observaciones)
-        if (pedido != null) {
-            _estado.value = CarritoUiState(pedidoConfirmado = pedido.numero)
+        viewModelScope.launch {
+            val pedido = repository.confirmarPedido(_estado.value.observaciones)
+            if (pedido != null) {
+                _estado.value = CarritoUiState(pedidoConfirmado = pedido.numero)
+            }
         }
     }
 
