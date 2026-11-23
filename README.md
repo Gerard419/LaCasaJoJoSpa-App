@@ -1,8 +1,11 @@
 # La Casa JoJo — Evaluación Parcial 4
 
-**Asignatura:** DSY1105 · Desarrollo de Aplicaciones Móviles  
-**Institución:** Duoc UC  
-**Docente:** Nancy Bernal  
+**Asignatura:** DSY1105 · Desarrollo de Aplicaciones Móviles
+
+**Institución:** Duoc UC
+
+**Docente:** Nancy Bernal
+
 **Tecnologías:** Kotlin, Jetpack Compose, MVVM, Retrofit, Spring Boot, H2, JUnit y MockK.
 
 Aplicación Android de gestión de menú y pedidos. Un administrador gestiona cuentas; el dueño administra platos y pedidos; y los clientes consultan el menú, personalizan platos, realizan pedidos y revisan su boleta. Los datos se comparten mediante tres microservicios propios, y la pantalla de cliente muestra información meteorológica obtenida desde Open-Meteo.
@@ -10,20 +13,19 @@ Aplicación Android de gestión de menú y pedidos. Un administrador gestiona cu
 ## Integrantes
 
 - Matías Tiznado
-- Juan Pablo Asenjo
 - Gerard Foix
 
-> La pauta base menciona trabajo en parejas. El equipo debe confirmar con la docente la autorización para presentar tres integrantes.
+**Colaboración previa:** Juan Pablo Asenjo formó parte del equipo en etapas anteriores. Las tareas pendientes de la EP4 se redistribuyeron entre Matías y Gerard.
 
 ## Arquitectura
 
 ```text
 Android (Kotlin + Jetpack Compose)
-  └─ ViewModel / StateFlow → AppRepository → Retrofit
-       ├─ usuarios-service (puerto 8081) → H2 usuariosdb
-       ├─ menu-service    (puerto 8082) → H2 menudb + JPG en data/fotos
-       ├─ pedidos-service (puerto 8083) → H2 pedidosdb
-       └─ Open-Meteo (API externa de clima)
+  └─ ViewModel / StateFlow → AppRepository → Retrofit
+       ├─ usuarios-service (puerto 8081) → H2 usuariosdb
+       ├─ menu-service    (puerto 8082) → H2 menudb + JPG en data/fotos
+       ├─ pedidos-service (puerto 8083) → H2 pedidosdb
+       └─ Open-Meteo (API externa de clima)
 ```
 
 **Backend:** [`backend/`](backend/) · **Código Android:** [`app/`](app/) · **Pruebas:** `app/src/test/`.
@@ -109,7 +111,7 @@ El script comprueba respuestas de los tres puertos; `403` para la lista de usuar
 
 ### 2. Abrir Android
 
-1. Abrir la carpeta principal `LaCasaJoJoSpa-App-main` en Android Studio.
+1. Abrir la carpeta principal del proyecto clonado en Android Studio.
 2. Esperar la sincronización de Gradle.
 3. Encender un emulador y ejecutar la aplicación, **con el backend ya funcionando**.
 
@@ -118,7 +120,7 @@ El script comprueba respuestas de los tres puertos; `403` para la lista de usuar
 **Celular físico:** debe estar en la misma red que el computador con el backend; compilar indicando la IP local de ese computador. En PowerShell, por ejemplo:
 
 ```powershell
-.\gradlew.bat assembleDebug "-PjojoBackendHost=192.168.1.50"
+.\gradlew\.bat assembleDebug "-PjojoBackendHost=192.168.1.50"
 ```
 
 Sustituye `192.168.1.50` por la IP real del computador donde corren los microservicios. Los puertos deben ser accesibles a través del firewall y la red. **El APK incluido en este repositorio usa la dirección para emulador, no una IP universal para teléfonos físicos.**
@@ -142,7 +144,7 @@ Las pruebas se implementaron con **JUnit, MockK y coroutines-test** y evalúan `
 En los resultados de la última versión auditada del proyecto se registraron **111 pruebas ejecutadas, 111 aprobadas, 0 fallidas y 0 omitidas**. Las pruebas pueden repetirse con:
 
 ```powershell
-.\gradlew.bat testDebugUnitTest
+.\gradlew\.bat testDebugUnitTest
 ```
 
 Informe HTML: `app/build/reports/tests/testDebugUnitTest/index.html`.
@@ -150,7 +152,7 @@ Informe HTML: `app/build/reports/tests/testDebugUnitTest/index.html`.
 Para generar el reporte de JaCoCo y calcular el alcance lógico documentado:
 
 ```powershell
-.\gradlew.bat createDebugUnitTestCoverageReport
+.\gradlew\.bat createDebugUnitTestCoverageReport
 python .\scripts\coverage_logic.py
 ```
 
@@ -196,7 +198,7 @@ La siguiente captura fue tomada tras instalar el APK release y comprobar su func
 
 ## Uso de GitHub y Trello
 
-La evaluación solicita actividad técnica real, commits por integrante y planificación con tareas distribuidas. El archivo [`TRELLO.md`](TRELLO.md) describe una propuesta de tareas, pero **no sustituye el tablero real ni demuestra por sí solo la participación de los integrantes**.
+La evaluación solicita actividad técnica real, commits por integrante y planificación con tareas distribuidas. La planificación y las tareas del equipo pueden consultarse en el tablero de Trello enlazado a continuación; el historial de cambios se puede verificar en GitHub.
 
 - **Repositorio público del equipo:** [Gerard419/LaCasaJoJoSpa-App](https://github.com/Gerard419/LaCasaJoJoSpa-App).
 - **Tablero Trello del equipo:** [La Casa JoJo — Evaluación Parcial 4](https://trello.com/b/KftOJt0C/la-casa-jojo-evaluacion-parcial-4).
@@ -206,7 +208,7 @@ La evaluación solicita actividad técnica real, commits por integrante y planif
 
 ![Tablero Trello — planificación del equipo](docs/trello_image.jpeg)
 
-> La imagen debe guardarse exactamente con el nombre `trello_equipo.png` en `docs/`. Los cambios y asignaciones reales se comprueban en el tablero enlazado.
+> La evidencia visual del tablero se encuentra en `docs/trello_image.jpeg`. Los cambios y asignaciones reales se comprueban en el tablero enlazado.
 
 ## Guion breve de demostración
 
