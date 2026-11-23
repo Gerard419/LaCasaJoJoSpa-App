@@ -1,5 +1,6 @@
 package com.app.lacasajojo.ui.views.cliente
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -38,12 +40,16 @@ import com.app.lacasajojo.ui.components.BotonJoJo
 import com.app.lacasajojo.ui.components.BotonTexto
 import com.app.lacasajojo.ui.components.CampoTexto
 import com.app.lacasajojo.ui.components.FotoPlato
+import com.app.lacasajojo.ui.components.TarjetaCatalogo
 import com.app.lacasajojo.ui.components.Pestanas
 import com.app.lacasajojo.ui.components.TarjetaJoJo
 import com.app.lacasajojo.utils.MAX_OBSERVACIONES
 import com.app.lacasajojo.utils.clp
+import com.app.lacasajojo.utils.descripcionClima
 import com.app.lacasajojo.utils.formatoBoleta
+import com.app.lacasajojo.utils.sugerenciaPorClima
 import com.app.lacasajojo.utils.vibrar
+import kotlin.math.roundToInt
 import com.app.lacasajojo.viewmodel.AppViewModelProvider
 import com.app.lacasajojo.viewmodel.ClienteViewModel
 
@@ -67,7 +73,7 @@ fun ClienteScreen(
     }
 
     Scaffold(
-        topBar = { BarraSuperior("La casa JoJo", "Salir") { viewModel.onSalir() } }
+        topBar = { BarraSuperior("La casa JoJo · Menú", "Salir") { viewModel.onSalir() } }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -91,47 +97,41 @@ fun ClienteScreen(
 @Composable
 private fun MenuTab(navController: NavHostController, viewModel: ClienteViewModel) {
     val grupos by viewModel.menu.collectAsState()
+    val clima by viewModel.clima.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(14.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        clima?.let { c ->
+            item {
+                TarjetaJoJo {
+                    Text("Hoy: ${c.temperatura.roundToInt()} °C · ${descripcionClima(c.codigo)}", fontWeight = FontWeight.Bold)
+                    Text(sugerenciaPorClima(c.temperatura, c.codigo))
+                }
+            }
+        }
         item {
-            Text(
-                "Menú del día",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Text("Menú del día", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
+            Text("Elige tu plato. Incluye 1 o 2 agregados y una ensalada.")
         }
-        item { Text("Todo plato incluye 1 o 2 agregados y una ensalada.") }
-        if (grupos.isEmpty()) {
-            item { Text("Hoy no hay platos disponibles.") }
-        }
+        if (grupos.isEmpty()) item { Text("Hoy no hay platos disponibles.") }
         for ((precio, platos) in grupos) {
             item(key = "precio_$precio") {
-                Text(
-                    precio.clp(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Text("Platos de ${precio.clp()}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             }
-            items(platos, key = { it.id }) { plato ->
-                TarjetaJoJo(modifier = Modifier.animateItem()) {
-                    FotoPlato(
-                        ruta = plato.foto,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp)
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(plato.nombre, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                        BotonJoJo("Elegir", { navController.navigate(Rutas.armar(plato.id)) })
+            item(key = "fila_$precio") {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(platos, key = { it.id }) { plato ->
+                        TarjetaCatalogo(
+                            nombre = plato.nombre,
+                            foto = plato.foto,
+                            precio = plato.precio.clp(),
+                            modifier = Modifier.clickable { navController.navigate(Rutas.armar(plato.id)) }
+                        ) {
+                            BotonJoJo("Elegir", { navController.navigate(Rutas.armar(plato.id)) }, Modifier.fillMaxWidth())
+                        }
                     }
                 }
             }

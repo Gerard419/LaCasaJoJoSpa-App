@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -42,10 +43,12 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +63,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.app.lacasajojo.ui.theme.NaranjoClaro
 import com.app.lacasajojo.ui.theme.NaranjoMuyClaro
 import com.app.lacasajojo.ui.theme.NaranjoOscuro
@@ -76,10 +80,10 @@ fun BarraSuperior(
     onVolver: (() -> Unit)? = null,
     onAccion: () -> Unit = {}
 ) {
-    val colorTexto = MaterialTheme.colorScheme.onPrimary
+    val colorTexto = MaterialTheme.colorScheme.onBackground
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = colorTexto
         ),
         title = { Text(titulo, fontWeight = FontWeight.Bold) },
@@ -133,12 +137,14 @@ fun Pestanas(opciones: List<String>, seleccionada: Int, onSeleccion: (Int) -> Un
 fun TarjetaJoJo(modifier: Modifier = Modifier, contenido: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = NaranjoMuyClaro),
-        border = BorderStroke(1.dp, NaranjoClaro)
+        border = BorderStroke(1.dp, NaranjoClaro),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.padding(15.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             content = contenido
         )
     }
@@ -237,6 +243,13 @@ fun CampoTexto(
         },
         visualTransformation = if (esPassword && !verPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = if (esPassword) KeyboardType.Password else teclado),
+        shape = RoundedCornerShape(14.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = NaranjoClaro,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = modifier.fillMaxWidth()
     )
 }
@@ -260,8 +273,12 @@ fun BotonJoJo(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interaccion,
-        colors = ButtonDefaults.buttonColors(containerColor = color),
-        modifier = modifier.scale(escala)
+        colors = ButtonDefaults.buttonColors(
+            containerColor = color,
+            contentColor = if (presionado) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onPrimary
+        ),
+        modifier = modifier.scale(escala).heightIn(min = 46.dp),
+        shape = RoundedCornerShape(24.dp)
     ) { Text(texto) }
 }
 
@@ -289,10 +306,12 @@ fun MensajeError(texto: String?) {
 // Foto de un plato guardada por la cámara; si no hay foto no dibuja nada
 @Composable
 fun FotoPlato(ruta: String?, modifier: Modifier = Modifier) {
-    val imagen = remember(ruta) { cargarFoto(ruta) }
-    if (imagen != null) {
+    val imagen by produceState<androidx.compose.ui.graphics.ImageBitmap?>(initialValue = null, key1 = ruta) {
+        value = cargarFoto(ruta)
+    }
+    imagen?.let { imagenCargada ->
         Image(
-            bitmap = imagen,
+            bitmap = imagenCargada,
             contentDescription = "Foto del plato",
             contentScale = ContentScale.Crop,
             modifier = modifier

@@ -12,12 +12,12 @@ private val EsquemaClaro = lightColorScheme(
     onPrimaryContainer = Negro,
     secondary = Naranjo,
     onSecondary = Negro,
-    background = Blanco,
+    background = CremaFondo,
     onBackground = Negro,
     surface = Blanco,
     onSurface = Negro,
     surfaceVariant = NaranjoMuyClaro,
-    onSurfaceVariant = Negro,
+    onSurfaceVariant = GrisSecundario,
     outline = NaranjoOscuro
 )
 

@@ -45,7 +45,7 @@ fun AdminScreen(viewModel: AdminViewModel = viewModel(factory = AppViewModelProv
     val usuarios by viewModel.usuarios.collectAsState()
 
     Scaffold(
-        topBar = { BarraSuperior("Administración", "Salir") { viewModel.onSalir() } }
+        topBar = { BarraSuperior("La casa JoJo · Admin", "Salir") { viewModel.onSalir() } }
     ) { padding ->
         LazyColumn(
             modifier = Modifier

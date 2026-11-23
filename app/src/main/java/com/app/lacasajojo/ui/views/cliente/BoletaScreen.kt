@@ -37,7 +37,7 @@ fun BoletaScreen(navController: NavHostController, repository: AppRepository, nu
 
     // Un cliente solo ve sus propias boletas; el dueño puede ver todas
     val puedeVer = pedido != null && usuario != null &&
-        (usuario.rol == Rol.DUENO || pedido.emailCliente == usuario.email)
+            (usuario.rol == Rol.DUENO || pedido.emailCliente == usuario.email)
 
     Scaffold(
         topBar = { BarraSuperior("Boleta", onVolver = { navController.popBackStack() }) }
@@ -60,6 +60,7 @@ fun BoletaScreen(navController: NavHostController, repository: AppRepository, nu
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    Text("COMPROBANTE DE PEDIDO", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                     Text("Boleta N° ${pedido.numero.formatoBoleta()}", fontWeight = FontWeight.Bold)
                     Text("Fecha: ${pedido.fecha}")
                     Text("Cliente: ${pedido.nombreCliente}")

@@ -42,9 +42,10 @@ fun RegistroScreen(
     }
 
     Scaffold(
-        topBar = { BarraSuperior("Crear cuenta", onVolver = { navController.popBackStack() }) }
+        topBar = { }
     ) { padding ->
         ColumnaFormulario(padding = padding) {
+            com.app.lacasajojo.ui.components.BotonTexto("Volver a iniciar sesión") { navController.popBackStack() }
             CampoTexto(
                 valor = estado.nombre,
                 onCambio = viewModel::onNombreChange,
