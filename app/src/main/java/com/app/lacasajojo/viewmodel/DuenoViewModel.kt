@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class ExtraFormUiState(
     val nombre: String = "",
@@ -40,8 +41,13 @@ class DuenoViewModel(private val repository: AppRepository) : ViewModel() {
     val formExtra: StateFlow<ExtraFormUiState> = _formExtra.asStateFlow()
 
     // ---- Platos
-    fun onCambiarDisponiblePlato(id: Int) = repository.cambiarDisponiblePlato(id)
-    fun onEliminarPlato(id: Int) = repository.eliminarPlato(id)
+    fun onCambiarDisponiblePlato(id: Int) {
+        viewModelScope.launch { repository.cambiarDisponiblePlato(id) }
+    }
+
+    fun onEliminarPlato(id: Int) {
+        viewModelScope.launch { repository.eliminarPlato(id) }
+    }
 
     // ---- Extras (agregados y ensaladas)
     fun onNombreExtraChange(valor: String) {
@@ -59,15 +65,26 @@ class DuenoViewModel(private val repository: AppRepository) : ViewModel() {
             _formExtra.update { it.copy(errorNombre = error) }
             return
         }
-        repository.agregarExtra(e.nombre.trim(), if (e.tipo == 0) TipoExtra.AGREGADO else TipoExtra.ENSALADA)
-        _formExtra.value = ExtraFormUiState(tipo = e.tipo)
+        viewModelScope.launch {
+            val tipo = if (e.tipo == 0) TipoExtra.AGREGADO else TipoExtra.ENSALADA
+            if (repository.agregarExtra(e.nombre.trim(), tipo)) {
+                _formExtra.value = ExtraFormUiState(tipo = e.tipo)
+            }
+        }
     }
 
-    fun onCambiarDisponibleExtra(id: Int) = repository.cambiarDisponibleExtra(id)
-    fun onEliminarExtra(id: Int) = repository.eliminarExtra(id)
+    fun onCambiarDisponibleExtra(id: Int) {
+        viewModelScope.launch { repository.cambiarDisponibleExtra(id) }
+    }
+
+    fun onEliminarExtra(id: Int) {
+        viewModelScope.launch { repository.eliminarExtra(id) }
+    }
 
     // ---- Pedidos
-    fun onCambiarEstadoPedido(numero: Int, nuevo: EstadoPedido) = repository.cambiarEstadoPedido(numero, nuevo)
+    fun onCambiarEstadoPedido(numero: Int, nuevo: EstadoPedido) {
+        viewModelScope.launch { repository.cambiarEstadoPedido(numero, nuevo) }
+    }
 
     fun onSalir() = repository.logout()
 }
