@@ -1,7 +1,11 @@
 package com.app.lacasajojo.ui.views.cliente
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +34,8 @@ import androidx.navigation.NavHostController
 import com.app.lacasajojo.ui.components.BarraSuperior
 import com.app.lacasajojo.ui.components.BotonJoJo
 import com.app.lacasajojo.ui.components.FotoPlato
+import com.app.lacasajojo.ui.components.FotoCatalogo
+import com.app.lacasajojo.ui.components.TarjetaCatalogo
 import com.app.lacasajojo.ui.components.MensajeError
 import com.app.lacasajojo.utils.clp
 import com.app.lacasajojo.viewmodel.AppViewModelProvider
@@ -72,11 +78,10 @@ fun ArmarPlatoScreen(navController: NavHostController, platoId: Int) {
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                FotoPlato(
+                FotoCatalogo(
+                    nombre = plato.nombre,
                     ruta = plato.foto,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
+                    modifier = Modifier.fillMaxWidth().height(145.dp)
                 )
                 Text(
                     plato.nombre,
@@ -92,18 +97,23 @@ fun ArmarPlatoScreen(navController: NavHostController, platoId: Int) {
                     fontWeight = FontWeight.Bold
                 )
                 if (agregados.isEmpty()) Text("No hay agregados disponibles hoy.")
-                agregados.forEach { extra ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.onAgregadoClick(extra.nombre) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = extra.nombre in estado.agregados,
-                            onCheckedChange = { viewModel.onAgregadoClick(extra.nombre) }
-                        )
-                        Text(extra.nombre)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(agregados.size) { indice ->
+                        val extra = agregados[indice]
+                        val elegido = extra.nombre in estado.agregados
+                        TarjetaCatalogo(
+                            nombre = extra.nombre,
+                            foto = null,
+                            modifier = Modifier
+                                .border(
+                                    if (elegido) 3.dp else 0.dp,
+                                    if (elegido) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent,
+                                    RoundedCornerShape(12.dp)
+                                )
+                                .clickable { viewModel.onAgregadoClick(extra.nombre) }
+                        ) {
+                            Text(if (elegido) "✓ Seleccionado" else "Tocar para elegir", style = MaterialTheme.typography.labelSmall)
+                        }
                     }
                 }
                 MensajeError(estado.errorAgregados)
@@ -115,18 +125,23 @@ fun ArmarPlatoScreen(navController: NavHostController, platoId: Int) {
                     fontWeight = FontWeight.Bold
                 )
                 if (ensaladas.isEmpty()) Text("No hay ensaladas disponibles hoy.")
-                ensaladas.forEach { extra ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.onEnsaladaClick(extra.nombre) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = estado.ensalada == extra.nombre,
-                            onClick = { viewModel.onEnsaladaClick(extra.nombre) }
-                        )
-                        Text(extra.nombre)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(ensaladas.size) { indice ->
+                        val extra = ensaladas[indice]
+                        val elegido = estado.ensalada == extra.nombre
+                        TarjetaCatalogo(
+                            nombre = extra.nombre,
+                            foto = null,
+                            modifier = Modifier
+                                .border(
+                                    if (elegido) 3.dp else 0.dp,
+                                    if (elegido) MaterialTheme.colorScheme.primary else androidx.compose.ui.graphics.Color.Transparent,
+                                    RoundedCornerShape(12.dp)
+                                )
+                                .clickable { viewModel.onEnsaladaClick(extra.nombre) }
+                        ) {
+                            Text(if (elegido) "✓ Seleccionada" else "Tocar para elegir", style = MaterialTheme.typography.labelSmall)
+                        }
                     }
                 }
                 MensajeError(estado.errorEnsalada)
