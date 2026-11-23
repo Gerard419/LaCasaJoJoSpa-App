@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class AdminUiState(
     val nombre: String = "",
@@ -59,14 +60,19 @@ class AdminViewModel(private val repository: AppRepository) : ViewModel() {
             }
             return
         }
-        if (!repository.crearCuentaDueno(e.nombre, e.email, e.password)) {
-            _estado.update { it.copy(errorEmail = "Ya existe una cuenta con ese correo") }
-        } else {
-            _estado.value = AdminUiState(mensajeExito = "Cuenta de dueño creada")
+        viewModelScope.launch {
+            val error = repository.crearCuentaDueno(e.nombre, e.email, e.password)
+            if (error != null) {
+                _estado.update { it.copy(errorEmail = error) }
+            } else {
+                _estado.value = AdminUiState(mensajeExito = "Cuenta de dueño creada")
+            }
         }
     }
 
-    fun onCambiarEstadoUsuario(email: String) = repository.cambiarEstadoUsuario(email)
+    fun onCambiarEstadoUsuario(email: String) {
+        viewModelScope.launch { repository.cambiarEstadoUsuario(email) }
+    }
 
     fun onSalir() = repository.logout()
 }
