@@ -43,6 +43,7 @@ import com.app.lacasajojo.ui.components.BotonTexto
 import com.app.lacasajojo.ui.components.CampoTexto
 import com.app.lacasajojo.ui.components.ColumnaFormulario
 import com.app.lacasajojo.ui.components.FotoPlato
+import com.app.lacasajojo.ui.components.FotoCatalogo
 import com.app.lacasajojo.utils.MAX_PLATO
 import com.app.lacasajojo.utils.guardarFoto
 import com.app.lacasajojo.viewmodel.AppViewModelProvider
@@ -123,11 +124,10 @@ fun PlatoFormScreen(navController: NavHostController, id: Int) {
             Spacer(Modifier.height(16.dp))
 
             // Foto del plato (opcional)
-            FotoPlato(
+            FotoCatalogo(
+                nombre = estado.nombre.ifBlank { "Plato" },
                 ruta = estado.foto,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
+                modifier = Modifier.fillMaxWidth().height(180.dp)
             )
             if (estado.foto != null) Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = ::abrirCamara, modifier = Modifier.fillMaxWidth()) {
