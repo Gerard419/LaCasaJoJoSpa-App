@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class LoginUiState(
     val email: String = "",
@@ -32,6 +33,10 @@ class LoginViewModel(private val repository: AppRepository) : ViewModel() {
     val cargado: StateFlow<Boolean> = snapshotFlow { repository.cargado }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), repository.cargado)
 
+    // Estado de la conexión con los microservicios (la pantalla avisa si está caído)
+    val servidorDisponible: StateFlow<Boolean> = snapshotFlow { repository.servidorDisponible }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), repository.servidorDisponible)
+
     fun onEmailChange(valor: String) {
         _estado.update { it.copy(email = valor, errorEmail = validarEmail(valor), errorGeneral = null) }
     }
@@ -50,12 +55,14 @@ class LoginViewModel(private val repository: AppRepository) : ViewModel() {
             _estado.update { it.copy(errorEmail = errorEmail, errorPassword = errorPassword) }
             return
         }
-        val resultado = repository.login(actual.email, actual.password)
-        val usuario = repository.usuarioActual
-        if (resultado != null || usuario == null) {
-            _estado.update { it.copy(errorGeneral = resultado ?: "No se pudo iniciar sesión") }
-        } else {
-            _estado.update { it.copy(errorGeneral = null, rolIngresado = usuario.rol) }
+        viewModelScope.launch {
+            val resultado = repository.login(actual.email, actual.password)
+            val usuario = repository.usuarioActual
+            if (resultado != null || usuario == null) {
+                _estado.update { it.copy(errorGeneral = resultado ?: "No se pudo iniciar sesión") }
+            } else {
+                _estado.update { it.copy(errorGeneral = null, rolIngresado = usuario.rol) }
+            }
         }
     }
 
